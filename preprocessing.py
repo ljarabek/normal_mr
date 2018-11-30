@@ -77,9 +77,11 @@ class DataStream:
         # for file in os.listdir()
 
 
-print(DataStream(8).get_batch())  # returns none!
+#print(DataStream(8).get_batch())  # returns none!
 # for lol in DataStream(5).dct:
 #    print(lol)
+
+
 
 
 """

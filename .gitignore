@@ -5,3 +5,7 @@
 .idea/workspace.xml
 __pycache__/multi_slice_viewer.cpython-36.pyc
 .idea/vcs.xml
+weights.mat
+weightshenanigans.py
+*.pyc
+*.xml
