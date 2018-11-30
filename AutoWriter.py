@@ -6,6 +6,19 @@ from tqdm import tqdm
 import scipy.io as sio
 import os
 
+"""
+
+
+Writes TensorFlow code from .t7 saved models in PyTorch.
+
+Adopted from https://github.com/jonrei/tf-AdaIN/blob/master/AdaIN.py graph_from_t7 method
+
+by https://github.com/ljarabek
+
+Note: Weights are saved in outputmat. Key prefixes are the same as model name
+
+"""
+
 
 def auto_writer(t7name = './tf-AdaIN-master/vgg_normalised.t7', outputpy='output.py', outputmat='weights.mat'):
     np.set_printoptions(threshold=np.nan)
