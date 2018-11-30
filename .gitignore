@@ -3,3 +3,5 @@
 .idea/modules.xml
 .idea/normal_mr.iml
 .idea/workspace.xml
+__pycache__/multi_slice_viewer.cpython-36.pyc
+.idea/vcs.xml
