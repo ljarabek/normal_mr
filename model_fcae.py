@@ -16,7 +16,7 @@ weights = sio.loadmat("weights.mat")
 
 
 #input = tf.Variable(initial_value=batch, dtype = tf.float32)
-input = tf.placeholder(dtype = tf.float32)
+input = tf.Variable(initial_value=batch, dtype = tf.float32,trainable=False)
 start = tf.identity(input)
 
 #weight = tf.Variable(weights['./tf-AdaIN-master/vgg_normalised.t7/conv2d_0'], trainable=True, dtype=tf.float32) #1133
@@ -47,6 +47,9 @@ bias = tf.Variable(weights['./tf-AdaIN-master/vgg_normalised.t7/conv2d_12b'],tra
 net = tf.nn.conv2d(net, weight, [1, 1,1, 1], padding='VALID')
 net = tf.nn.bias_add(net, bias[0,:])
 net = tf.nn.relu(net)
+
+#mean_std = tf.nn.moments(net,axes=[1,2])
+#net = tf.nn.batch_normalization()
 
 net = tf.pad(net, [[0 ,0], [1, 1], [1, 1], [0 ,0]], 'REFLECT')
 weight = tf.Variable(weights['./tf-AdaIN-master/decoder-content-similar.t7/conv2d_18'], trainable=True, dtype=tf.float32)

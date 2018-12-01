@@ -7,18 +7,6 @@ from tqdm import tqdm
 from multi_slice_viewer import multi_slice_viewer
 import matplotlib.pyplot as plt
 
-# with gzip.open(, 'rb') as file:
-#    nii = file.read()
-#
-# p#rint(nii)
-lol = nib.load("C:\MR slike\clinical-ms-axis2-slice100/"
-               "00c3b6bfcaaab48405b3cb0f610ff761a899b757a330129c03d367f8/brainmask.nii.gz")
-print(lol.get_fdata().shape)
-
-
-# plt.imshow(lol.get_fdata()[:,:,0])
-# plt.show()
-
 class DataStream:
 
     def __init__(self, batch_size, root_dir="C:/MR slike/healthy-axis2-slice100/"):  # TODO: to choose masked, proces ..

@@ -1,7 +1,7 @@
 import tensorflow as tf
 import os
 
-def save(saver, sess, logdir, step):
+def save(saver, sess, logdir, step=None):
     model_name = 'model.ckpt'
     checkpoint_path = os.path.join(logdir, model_name)
 
