@@ -8,7 +8,7 @@ from multi_slice_viewer import multi_slice_viewer
 import matplotlib.pyplot as plt
 
 class DataStream:
-
+    #TODO: GET BATCH z YIELD!! (potem lahko daš tf.dataset - from generator)
     def __init__(self, batch_size, root_dir="C:/MR slike/healthy-axis2-slice100/"):  # TODO: to choose masked, proces ..
         """
         :type batch_size: int
@@ -51,6 +51,10 @@ class DataStream:
 
     # weights argument in DataFrame.sample()!!!
     def get_batch(self):
+        """
+
+        :return: ids, batch
+        """
         batch = []
         ids = []
         sample = self.moments.sample(n=self.batchSize)
@@ -65,7 +69,9 @@ class DataStream:
         # for file in os.listdir()
 
 
-#print(DataStream(8).get_batch())  # returns none!
+#idd, b = DataStream(8).get_batch()  # returns none!
+
+#print(np.array(b).shape)
 # for lol in DataStream(5).dct:
 #    print(lol)
 
