@@ -9,3 +9,4 @@ weights.mat
 weightshenanigans.py
 *.pyc
 *.xml
+*.t7

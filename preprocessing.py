@@ -8,7 +8,7 @@ from multi_slice_viewer import multi_slice_viewer
 import matplotlib.pyplot as plt
 
 class DataStream:
-    #TODO: GET BATCH z YIELD!! (potem lahko daš tf.dataset - from generator)
+    # TODO: GET BATCH z YIELD!! (potem lahko daš tf.dataset - from generator)
     def __init__(self, batch_size, root_dir="C:/MR slike/healthy-axis2-slice100/"):  # TODO: to choose masked, proces ..
         """
         :type batch_size: int
@@ -59,30 +59,53 @@ class DataStream:
         ids = []
         sample = self.moments.sample(n=self.batchSize)
         for id, mom in sample.iterrows():
-            im = np.array((self.dct[id] - mom['mean']) / mom['std'])
+            im = np.array((self.dct[id] - mom['mean']) / mom['std'])    # TODO: CURRENTLY REDUNDANT normalization
             batch.append(im)
             ids.append(id)
-        batch = np.array(batch)
+        batch = np.array(batch, np.float32)
+
+        """TO FIT THE JPG"""
+        batch = (batch - np.min(batch, (1, 2), keepdims=True))  # / np.max(batchc) #255 *
+        batch /= np.max(batch, (1, 2), keepdims=True)
+
+        batch *= 255
+        batch = np.tile(batch, (3))
+        """END"""
+
+
+
 
         return ids, batch
 
-        # for file in os.listdir()
+    def get_fixed_batch(self, default_id = "3d80f47f971140cdf6c35e8852cc3cc276767d1ddcfd1918fd4e8beb"):
+        for file in sorted(os.listdir(self.root + default_id)):
+            if 't1w' in file:
+                fixed_imag = np.array(nib.load(self.root + default_id + "/" + file).get_fdata())
+        batch = fixed_imag
+        batch = (batch - np.min(batch, (0, 1), keepdims=True))  # / np.max(batchc) #255 *
+        batch /= np.max(batch, (0, 1), keepdims=True)
+        batch *= 255
+
+        b = []
+        for d in range(self.batchSize):
+            b.append(batch)
+        b = np.array(b)
+        print(b.shape)
+        b = np.tile(b, (3))
+        return default_id, b
 
 
-#idd, b = DataStream(8).get_batch()  # returns none!
-
-#print(np.array(b).shape)
-# for lol in DataStream(5).dct:
-#    print(lol)
-
+#lol = DataStream(4).get_fixed_batch()
+#print(lol.shape) #--> (4, 193, 229, 4)
+#multi_slice_viewer(lol[:,:,:,1])
+#multi_slice_viewer(lol[:,:,:,2])
 
 
 
 """
-lol = nib.load("C:\MR slike\clinical-ms-axis2-slice100/"
-               "00c3b6bfcaaab48405b3cb0f610ff761a899b757a330129c03d367f8/t1w.nii.gz")
-print(lol)
-PRINTS THIS:
+print(nib.load("C:\MR slike\clinical-ms-axis2-slice100/"
+               "00c3b6bfcaaab48405b3cb0f610ff761a899b757a330129c03d367f8/t1w.nii.gz"))
+↓↓↓↓↓↓
 data shape (193, 229, 1)
 affine: 
 [[   1.    0.    0.  -96.]
