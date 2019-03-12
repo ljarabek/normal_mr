@@ -14,7 +14,7 @@ weights = sio.loadmat("weights.mat")
 
 
 class Model:
-    def __init__(self, sess, batch_size, root_dir="../healthy-axis2-slice100/", ckpt=None):
+    def __init__(self, sess, batch_size, root_dir="C:\MR slike/healthy-axis2-slice100/", ckpt=None):
         """
         :param sess: tf.Session()
         :param ckpt: str
@@ -73,36 +73,36 @@ class Model:
             net = tf.nn.conv2d(net, self.weights_encoder['conv2d_12'], [1, 1, 1, 1], padding='VALID')
             net = tf.nn.bias_add(net, self.weights_encoder['conv2d_12b'][0, :])
             net = tf.nn.relu(net)
-            # activations.append(net)
+            activations.append(net)
             net = tf.nn.max_pool(net, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
                                  padding='VALID', name=str(b'pool2', 'utf-8'))
             net = tf.pad(net, [[0, 0], [1, 1], [1, 1], [0, 0]], 'REFLECT')
             net = tf.nn.conv2d(net, self.weights_encoder['conv2d_16'], [1, 1, 1, 1], padding='VALID')
             net = tf.nn.bias_add(net, self.weights_encoder['conv2d_16b'][0, :])
             net = tf.nn.relu(net)
-            # activations.append(net)
+            activations.append(net)
             net = tf.pad(net, [[0, 0], [1, 1], [1, 1], [0, 0]], 'REFLECT')
             net = tf.nn.conv2d(net, self.weights_encoder['conv2d_19'], [1, 1, 1, 1], padding='VALID')
             net = tf.nn.bias_add(net, self.weights_encoder['conv2d_19b'][0, :])
             net = tf.nn.relu(net)
-            # activations.append(net)
+            activations.append(net)
             net = tf.pad(net, [[0, 0], [1, 1], [1, 1], [0, 0]], 'REFLECT')
             net = tf.nn.conv2d(net, self.weights_encoder['conv2d_22'], [1, 1, 1, 1], padding='VALID')
             net = tf.nn.bias_add(net, self.weights_encoder['conv2d_22b'][0, :])
             net = tf.nn.relu(net)
-            # activations.append(net)
+            activations.append(net)
             net = tf.pad(net, [[0, 0], [1, 1], [1, 1], [0, 0]], 'REFLECT')
             net = tf.nn.conv2d(net, self.weights_encoder['conv2d_25'], [1, 1, 1, 1], padding='VALID')
             net = tf.nn.bias_add(net, self.weights_encoder['conv2d_25b'][0, :])
             net = tf.nn.relu(net)
-            # activations.append(net)
+            activations.append(net)
             net = tf.nn.max_pool(net, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
                                  padding='VALID', name=str(b'pool3', 'utf-8'))
             net = tf.pad(net, [[0, 0], [1, 1], [1, 1], [0, 0]], 'REFLECT')
             net = tf.nn.conv2d(net, self.weights_encoder['conv2d_29'], [1, 1, 1, 1], padding='VALID')
             net = tf.nn.bias_add(net, self.weights_encoder['conv2d_29b'][0, :])
             net = tf.nn.relu(net)
-            # activations.append(net)
+            activations.append(net)
         return net, activations
 
     def decode(self, input):

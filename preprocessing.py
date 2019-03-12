@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 class DataStream:
     # TODO: GET BATCH z YIELD!! (potem lahko daš tf.dataset - from generator)
-    def __init__(self, batch_size, root_dir="../healthy-axis2-slice100/"):  # TODO: to choose masked, proces ..
+    def __init__(self, batch_size, root_dir="C:\MR slike/healthy-axis2-slice100/"):  # TODO: to choose masked, proces ..
         """
         :type batch_size: int
         :type root_dir: str
