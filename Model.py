@@ -9,11 +9,12 @@ import matplotlib.pyplot as plt
 from multi_slice_viewer import multi_slice_viewer
 from init_weights import encoder_weights, decoder_weights
 from tqdm import tqdm
+
 weights = sio.loadmat("weights.mat")
 
 
 class Model:
-    def __init__(self, sess, batch_size, root_dir="C:\MR slike/healthy-axis2-slice100/", ckpt=None):
+    def __init__(self, sess, batch_size, root_dir="../healthy-axis2-slice100/", ckpt=None):
         """
         :param sess: tf.Session()
         :param ckpt: str
@@ -36,6 +37,7 @@ class Model:
 
     def save(self, dir):
         save(self.saver, self.sess, logdir=dir)
+
     def encode(self, input):
         """
         :param input: tf.Tensor (b h w c)
@@ -44,9 +46,9 @@ class Model:
         activations = []
 
         with tf.name_scope('encoder'):  # TODO: UPORABLJAJO SD IN MEAN OD RELU1_1,2_1,3_1,4_1;; popravi L2 Losses...
-            net = tf.pad(input, [[0, 0], [1, 1], [1, 1], [0, 0]], 'REFLECT')
-            activations.append(net)
-            net = tf.nn.conv2d(net, self.weights_encoder['conv2d_0'], [1, 1, 1, 1], padding='VALID')
+            # net = tf.pad(input, [[0, 0], [1, 1], [1, 1], [0, 0]], 'REFLECT')
+            # activations.append(net)
+            net = tf.nn.conv2d(input, self.weights_encoder['conv2d_0'], [1, 1, 1, 1], padding='VALID')
             net = tf.nn.bias_add(net, self.weights_encoder['conv2d_0b'][0, :])  # 3 channel input!
             net = tf.nn.relu(net)
             activations.append(net)
@@ -66,45 +68,45 @@ class Model:
             net = tf.nn.conv2d(net, self.weights_encoder['conv2d_9'], [1, 1, 1, 1], padding='VALID')
             net = tf.nn.bias_add(net, self.weights_encoder['conv2d_9b'][0, :])
             net = tf.nn.relu(net)
-            activations.append(net) ## TODO: TUKAJ JE ZADNJA AKTIVACIJA ZA STYLE
+            activations.append(net)  ## TODO: TUKAJ JE ZADNJA AKTIVACIJA ZA STYLE
             net = tf.pad(net, [[0, 0], [1, 1], [1, 1], [0, 0]], 'REFLECT')
             net = tf.nn.conv2d(net, self.weights_encoder['conv2d_12'], [1, 1, 1, 1], padding='VALID')
             net = tf.nn.bias_add(net, self.weights_encoder['conv2d_12b'][0, :])
             net = tf.nn.relu(net)
-            activations.append(net)
+            # activations.append(net)
             net = tf.nn.max_pool(net, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
                                  padding='VALID', name=str(b'pool2', 'utf-8'))
             net = tf.pad(net, [[0, 0], [1, 1], [1, 1], [0, 0]], 'REFLECT')
             net = tf.nn.conv2d(net, self.weights_encoder['conv2d_16'], [1, 1, 1, 1], padding='VALID')
             net = tf.nn.bias_add(net, self.weights_encoder['conv2d_16b'][0, :])
             net = tf.nn.relu(net)
-            activations.append(net)
+            # activations.append(net)
             net = tf.pad(net, [[0, 0], [1, 1], [1, 1], [0, 0]], 'REFLECT')
             net = tf.nn.conv2d(net, self.weights_encoder['conv2d_19'], [1, 1, 1, 1], padding='VALID')
             net = tf.nn.bias_add(net, self.weights_encoder['conv2d_19b'][0, :])
             net = tf.nn.relu(net)
-            activations.append(net)
+            # activations.append(net)
             net = tf.pad(net, [[0, 0], [1, 1], [1, 1], [0, 0]], 'REFLECT')
             net = tf.nn.conv2d(net, self.weights_encoder['conv2d_22'], [1, 1, 1, 1], padding='VALID')
             net = tf.nn.bias_add(net, self.weights_encoder['conv2d_22b'][0, :])
             net = tf.nn.relu(net)
-            activations.append(net)
+            # activations.append(net)
             net = tf.pad(net, [[0, 0], [1, 1], [1, 1], [0, 0]], 'REFLECT')
             net = tf.nn.conv2d(net, self.weights_encoder['conv2d_25'], [1, 1, 1, 1], padding='VALID')
             net = tf.nn.bias_add(net, self.weights_encoder['conv2d_25b'][0, :])
             net = tf.nn.relu(net)
-            activations.append(net)
+            # activations.append(net)
             net = tf.nn.max_pool(net, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
                                  padding='VALID', name=str(b'pool3', 'utf-8'))
             net = tf.pad(net, [[0, 0], [1, 1], [1, 1], [0, 0]], 'REFLECT')
             net = tf.nn.conv2d(net, self.weights_encoder['conv2d_29'], [1, 1, 1, 1], padding='VALID')
             net = tf.nn.bias_add(net, self.weights_encoder['conv2d_29b'][0, :])
             net = tf.nn.relu(net)
-            activations.append(net)
+            # activations.append(net)
         return net, activations
 
     def decode(self, input):
-        activations  = []
+        activations = []
         net = tf.pad(input, [[0, 0], [1, 1], [1, 1], [0, 0]], 'REFLECT')
         net = tf.nn.conv2d(net, self.weights_decoder['conv2d_1'], [1, 1, 1, 1], padding='VALID')
         net = tf.nn.bias_add(net, self.weights_decoder['conv2d_1b'][0, :])
@@ -113,6 +115,7 @@ class Model:
         d = tf.shape(net)
         size = [d[1] * 2, d[2] * 2]
         net = tf.image.resize_nearest_neighbor(net, size)
+        # !!! input v net spremen!!
         net = tf.pad(net, [[0, 0], [1, 1], [1, 1], [0, 0]], 'REFLECT')
         net = tf.nn.conv2d(net, self.weights_decoder['conv2d_5'], [1, 1, 1, 1], padding='VALID')
         net = tf.nn.bias_add(net, self.weights_decoder['conv2d_5b'][0, :])
@@ -171,9 +174,11 @@ class Model:
         self.input_c = tf.Variable(np.float32(self.batch), trainable=False, name='input_content')
         self.input_s = tf.Variable(np.float32(self.batch), trainable=False, name='input_style')
 
-        self.latent_c, self.act_c = self.encode(input=self.input_c)
+        inp_c = self.input_c  # 192, 224, 1
+        inp_s = self.input_s
+        self.latent_c, self.act_c = self.encode(input=inp_c)
 
-        self.latent_s, self.act_s = self.encode(input=self.input_s)
+        self.latent_s, self.act_s = self.encode(input=inp_s)
 
         self.latent_c_s = AdaIN(self.latent_c, self.latent_s, 1.0)
 
@@ -195,30 +200,29 @@ class Model:
                 m_std_loss.append([mean_l, std_l])
             self.loss_style = tf.reduce_mean(m_std_loss)  # 5e-8 *
 
-            self.loss = self.loss_content + self.loss_style *0.3#* 0.03  # + self.loss_content  # +self.loss_style)#self.loss_style #self.loss_content 0.001*  #
+            self.loss = self.loss_content + self.loss_style * 0.3  # * 0.03  # + self.loss_content  # +self.loss_style)#self.loss_style #self.loss_content 0.001*  #
 
         self.minimizeLoss = tf.train.AdamOptimizer(learning_rate=0.0003).minimize(self.loss)  # 0.0000003
-        tf.global_variables_initializer().run()
+        # tf.global_variables_initializer().run() #TO DO: zakaj ne dela?
 
-
-    #def train_step(self, same_style = True):
+    # def train_step(self, same_style = True):
     #    idsc, batchc = self.data.get_batch()
     #    batchs = self.data.get_fixed_batch()
     #    self.sess.run(self.minimizeLoss, feed_dict={})
 
 
-
-with tf.Session() as sess:
-    mod = Model(sess=sess, batch_size=7, ckpt= "C:\MR_normalization\ckpts3\model.ckpt")
+"""with tf.Session() as sess:
+    mod = Model(sess=sess, batch_size=5)
     # lr = tf.Variable(0.003, False, name='learning_rate')
     # tf.global_variables_initializer().run()
     idss, batchs = mod.data.get_fixed_batch()
-    for i in tqdm(range(1)):
+    for i in tqdm(range(15)):
         idsc, batchc = mod.data.get_batch()
         if idsc == idss:
             continue
-        output, rc, _, ls, lc, act_decoder, act_encoder = sess.run(
-            (mod.output, mod.output_recon_c, mod.minimizeLoss, mod.loss_style, mod.loss_content, mod.act_d, mod.act_s),
+        output, rc, _, ls, lc, act_decoder, act_encoder, act_d_encoder = sess.run(
+            (mod.output, mod.output_recon_c, mod.minimizeLoss, mod.loss_style, 
+             mod.loss_content, mod.act_d, mod.act_s, mod.act_r_c),
             feed_dict={mod.input_c: batchc, mod.input_s: batchs})
 
         #if (i == 1):
@@ -228,26 +232,4 @@ with tf.Session() as sess:
         #    plt.show()
         print(str(i) + " Ls {} + Lc {}  ".format(ls, lc))  # str(i) + str(idss) + str(idsc) +
         # print(tf.trainable_variables())
-    #mod.save("C:/MR_normalization/ckpts3/")
-
-    # print(np.array(mod.numbers).shape)
-
-for d in range(20):
-    try:
-        #print("{} layer of decoder: {}".format(8-d, np.array(act_decoder[8-d]).shape))
-        print("{} layer of encoder: {}".format(d, np.array(act_encoder[d]).shape))
-    except:
-        print("it's broken bro")
-
-
-for d in range(20):
-    try:
-        print("{} layer of decoder: {}".format(d, np.array(act_decoder[d]).shape))
-        #print("{} layer of encoder: {}".format(d, np.array(act_encoder[d]).shape))
-    except:
-        print("it's broken bro")
-
-#multi_slice_viewer(np.array(output)[:,:,:,0])
-#multi_slice_viewer(np.array(batchc)[:,:,:,0])
-# plt.imshow(np.array(batchs)[0,:,:,0])
-# plt.show()"""
+    mod.save("../checkpoints/ckpts4/")"""
